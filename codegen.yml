@@ -1,0 +1,21 @@
+overwrite: true
+schema:
+  - 'http://localhost:8080/v1/graphql':
+      headers:
+        x-hasura-admin-secret: 'Cc3AzG0oczlGsTXhpqhrt3i1KseejYDefuNcFwyznyjTZBIB49khSSVClFz1MbIq'
+documents: 'src/**/*.graphql'
+generates:
+  src/generated/graphql.ts:
+    plugins:
+      - 'typescript'
+      - 'typescript-operations'
+      - 'named-operations-object'
+      - 'typescript-urql'
+    config:
+      pureMagicComment: true
+      exposeFetcher: true
+      exposeQueryKeys: true
+      withHooks: true
+  ./graphql.schema.json:
+    plugins:
+      - 'introspection'

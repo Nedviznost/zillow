@@ -1,0 +1,285 @@
+query SearchHomesByLocation(
+  $distinct_on: [homes_select_column!]
+  $limit: Int
+  $offset: Int
+  $order_by: [homes_order_by!]
+  $where: homes_bool_exp
+) {
+  homes(
+    distinct_on: $distinct_on
+    limit: $limit
+    offset: $offset
+    order_by: $order_by
+    where: $where
+  ) {
+    id
+    lat
+    lng
+    style
+    price
+    status
+  }
+}
+
+query SearchHomesByLocationDetailed(
+  $distinct_on: [homes_select_column!]
+  $limit: Int
+  $offset: Int
+  $order_by: [homes_order_by!]
+  $where: homes_bool_exp
+) {
+  homes(
+    distinct_on: $distinct_on
+    limit: $limit
+    offset: $offset
+    order_by: $order_by
+    where: $where
+  ) {
+    id
+    lat
+    lng
+    yearBuilt
+    style
+    address
+    bath
+    beds
+    price
+    sqft
+    plan
+    imgs
+    published
+    status
+    created_at
+    updated_at
+  }
+}
+query GetMyHomes(
+  $distinct_on: [homes_select_column!]
+  $limit: Int
+  $offset: Int
+  $order_by: [homes_order_by!]
+  $where: homes_bool_exp
+) {
+  homes(
+    distinct_on: $distinct_on
+    limit: $limit
+    offset: $offset
+    order_by: $order_by
+    where: $where
+  ) {
+    id
+    address
+    bath
+    beds
+    price
+    sqft
+    plan
+    imgs
+    published
+    status
+  }
+}
+
+query GetHomeById($id: Int!) {
+  homes_by_pk(id: $id) {
+    price
+    id
+    sqft
+    bath
+    beds
+    address
+    style
+    imgs
+    published
+  }
+}
+
+mutation InsertUserHome($hId: Int!, $uid: String!, $type: viewed_enum_enum!) {
+  insert_user_homes_one(
+    object: { hId: $hId, uid: $uid, type: $type }
+    on_conflict: { constraint: user_homes_pkey, update_columns: [hId, type] }
+  ) {
+    id
+    type
+    uid
+    hId
+  }
+}
+ 
+
+query GetWishlistedHomes($uid: String!) {
+  wishlisted: user_homes(
+    where: { uid: { _eq: $uid }, type: { _eq: WISHLISTED } }
+  ) {
+    id
+    hId
+  }
+}
+
+query GetWishlistedHomesDetailed($uid: String!) {
+  wishlisted: user_homes(
+    where: { uid: { _eq: $uid }, type: { _eq: WISHLISTED } }
+  ) {
+    id
+    hId
+    home {
+      address
+      price
+      imgs
+      bath
+      beds
+      sqft
+    }
+  }
+}
+
+mutation RemoveWishlist($id: Int!) {
+  update_user_homes_by_pk(
+    pk_columns: { id: $id }
+    _set: { type: REMOVED_FROM_WISHLIST }
+  ) {
+    id
+    hId
+  }
+}
+
+mutation DeleteWishlist($uid: String!, $hId: Int!) {
+  delete_user_homes(where: { uid: { _eq: $uid }, hId: { _eq: $hId } }) {
+    affected_rows
+  }
+}
+
+query GetHome($id: Int!) {
+  homes_by_pk(id: $id) {
+    uid
+    title
+    address
+    bath
+    beds
+    city
+    created_at
+    description
+    features
+    id
+    lat
+    lng
+    plan
+    price
+    sqft
+    state
+    style
+    updated_at
+    yearBuilt
+    zipcode
+    imgs
+    published
+    status
+  }
+}
+
+mutation UpdateHome(
+  $id: Int!
+  $address: String!
+  $bath: numeric
+  $beds: numeric
+  $city: String
+  $description: String
+  $features: String
+  $imgs: jsonb
+  $lat: numeric
+  $lng: numeric
+  $plan: numeric
+  $price: numeric
+  $sqft: numeric
+  $state: String
+  $style: String
+  $title: String
+  $published: Boolean
+  $yearBuilt: numeric
+  $zipcode: String
+  $status: String
+) {
+  update_homes_by_pk(
+    pk_columns: { id: $id }
+    _set: {
+      address: $address
+      bath: $bath
+      beds: $beds
+      city: $city
+      description: $description
+      features: $features
+      imgs: $imgs
+      lat: $lat
+      lng: $lng
+      plan: $plan
+      price: $price
+      sqft: $sqft
+      state: $state
+      style: $style
+      title: $title
+      yearBuilt: $yearBuilt
+      zipcode: $zipcode
+      published: $published
+      status: $status
+    }
+  ) {
+    title
+    address
+    bath
+    beds
+    city
+    description
+    features
+    imgs
+    lat
+    lng
+    plan
+    price
+    sqft
+    state
+    style
+    yearBuilt
+    zipcode
+    status
+    published
+  }
+}
+
+mutation InsertHome($object: homes_insert_input!) {
+  insert_homes_one(object: $object) {
+    title
+    address
+    bath
+    beds
+    city
+    created_at
+    description
+    features
+    id
+    lat
+    lng
+    price
+    plan
+    sqft
+    published
+    state
+    style
+    updated_at
+    yearBuilt
+    zipcode
+    status
+  }
+}  
+ 
+
+mutation SetHomePlan($id: Int!, $plan: numeric) {
+  update_homes_by_pk(pk_columns: { id: $id }, _set: { plan: $plan }) {
+    plan
+  }
+}
+
+mutation SetHomePublished($id: Int!, $published: Boolean) {
+  update_homes_by_pk(pk_columns: { id: $id }, _set: { published: $published }) {
+    published
+  }
+}
